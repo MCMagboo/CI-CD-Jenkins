@@ -1,0 +1,19 @@
+{
+  // Format on save with Prettier
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.validate": ["javascript"],
+  "files.eol": "\n",
+
+  // Groovy (Jenkinsfile) uses 4-space indentation by convention
+  "[groovy]": {
+    "editor.tabSize": 4
+  },
+
+  // --- Jenkins Pipeline Linter Connector ---------------------------------
+  // Lets you validate the Jenkinsfile from inside VSCode (Cmd/Ctrl+Shift+P ->
+  // "Validate Jenkinsfile"). Point these at YOUR Jenkins server.
+  "jenkins.pipeline.linter.connector.url": "http://localhost:8080/pipeline-model-converter/validate",
+  "jenkins.pipeline.linter.connector.crumbUrl": "http://localhost:8080/crumbIssuer/api/json",
+  "jenkins.pipeline.linter.connector.user": "your-jenkins-username"
+}

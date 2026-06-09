@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "secanis.jenkinsfile-support",
+    "janjoerke.jenkins-pipeline-linter-connector",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "eamodio.gitlens",
+    "ms-azuretools.vscode-docker"
+  ]
+}
