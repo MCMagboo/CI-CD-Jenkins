@@ -1,7 +1,4 @@
-FROM node:18-alpine
-
-# Install missing library
-RUN apk add --no-cache libatomic
+FROM node:18-bullseye
 
 WORKDIR /app
 
@@ -12,5 +9,4 @@ COPY dist/ ./dist/
 COPY src/ ./src/
 
 EXPOSE 3000
-
 CMD ["node", "src/server.js"]
