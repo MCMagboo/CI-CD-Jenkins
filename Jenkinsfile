@@ -9,6 +9,7 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 echo "Checking out source code..."
@@ -48,7 +49,7 @@ pipeline {
         stage('Deploy to Staging') {
             steps {
                 echo "Deploying to staging..."
-                bat 'scripts\\deploy.bat staging'
+                bat 'bash scripts/deploy.sh staging'
             }
         }
     }
@@ -57,8 +58,20 @@ pipeline {
         success {
             echo "✅ Pipeline finished successfully."
         }
+
         failure {
             echo "❌ Pipeline failed — check logs above."
+        }
+
+        always {
+            script {
+                try {
+                    echo "Cleaning workspace..."
+                    cleanWs()
+                } catch (e) {
+                    echo "Workspace cleanup skipped."
+                }
+            }
         }
     }
 }
