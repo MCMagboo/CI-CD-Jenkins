@@ -72,6 +72,10 @@ pipeline {
             }
         }
     }
+    tools {
+  nodejs "NodeJS"
+}
+
 
     post {
         success {
