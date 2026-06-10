@@ -1,4 +1,7 @@
-FROM node:18-bullseye
+FROM node:18-alpine
+
+# Install missing library
+RUN apk add --no-cache libatomic
 
 WORKDIR /app
 
