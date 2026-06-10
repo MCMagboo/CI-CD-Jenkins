@@ -2,20 +2,13 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME = 'ci-cd-jenkins-app'
-    }
-
-    options {
-        timestamps()
-        timeout(time: 30, unit: 'MINUTES')
-        buildDiscarder(logRotator(numToKeepStr: '10'))
-        disableConcurrentBuilds()
+        IMAGE_NAME = "ci-cd-jenkins-app"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                echo "Checking out the source code..."
+                echo "Checking out source code..."
                 checkout scm
             }
         }
@@ -24,19 +17,19 @@ pipeline {
             steps {
                 script {
                     echo "Building Docker image from Dockerfile..."
-                    dockerImage = docker.build("${APP_NAME}")
+                    dockerImage = docker.build("${IMAGE_NAME}")
                 }
             }
         }
 
-        stage('Install & Test in Container') {
+        stage('Install Dependencies & Tests') {
             steps {
                 script {
                     dockerImage.inside {
                         echo "Installing dependencies..."
                         sh 'npm ci'
 
-                        echo "Running linter..."
+                        echo "Running lint..."
                         sh 'npm run lint'
 
                         echo "Running unit tests..."
@@ -46,11 +39,11 @@ pipeline {
             }
         }
 
-        stage('Build App in Container') {
+        stage('Build App') {
             steps {
                 script {
                     dockerImage.inside {
-                        echo "Packaging the application..."
+                        echo "Building application..."
                         sh 'npm run build'
                         archiveArtifacts artifacts: 'dist/**', allowEmptyArchive: true
                     }
@@ -62,7 +55,7 @@ pipeline {
             steps {
                 script {
                     dockerImage.inside {
-                        echo "Deploying ${APP_NAME} to staging..."
+                        echo "Deploying to staging..."
                         sh 'bash scripts/deploy.sh staging'
                     }
                 }
@@ -75,10 +68,9 @@ pipeline {
             echo "✅ Pipeline finished successfully."
         }
         failure {
-            echo "❌ Pipeline failed — check the stage logs above."
+            echo "❌ Pipeline failed — check logs above."
         }
         always {
-            echo "Cleaning the workspace..."
             cleanWs()
         }
     }
