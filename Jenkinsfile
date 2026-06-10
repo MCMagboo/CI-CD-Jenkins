@@ -15,6 +15,11 @@ pipeline {
     // In a real setup you might pin to a label, e.g. agent { label 'linux' }
     agent any
 
+    // ---- Tools: NodeJS plugin manages the Node/npm installation ------------
+    tools {
+        nodejs 'NodeJS-18'   // must match the name set in Manage Jenkins > Tools > NodeJS
+    }
+
     // ---- Environment variables available to every stage --------------------
     environment {
         APP_NAME     = 'cicd-demo-app'
