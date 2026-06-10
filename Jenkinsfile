@@ -6,15 +6,10 @@
 // =============================================================================
 
 pipeline {
-
-    // Run all stages inside a Node 18 container
-    agent {
-        agent any
-        ...
-    }
+    agent any
 
     environment {
-        APP_NAME     = 'cicd-demo-app'
+        APP_NAME = 'cicd-demo-app'
     }
 
     options {
@@ -23,6 +18,7 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
         disableConcurrentBuilds()
     }
+
 
     stages {
 
