@@ -20,28 +20,28 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo "Installing dependencies..."
-                bat 'npm ci'
+                sh 'npm ci'
             }
         }
 
         stage('Lint') {
             steps {
                 echo "Running lint..."
-                bat 'npm run lint'
+                sh 'npm run lint'
             }
         }
 
         stage('Test') {
             steps {
                 echo "Running unit tests..."
-                bat 'npm test'
+                sh 'npm test'
             }
         }
 
         stage('Build') {
             steps {
                 echo "Building application..."
-                bat 'npm run build'
+                sh 'npm run build'
                 archiveArtifacts artifacts: 'dist/**', allowEmptyArchive: true
             }
         }
@@ -49,7 +49,7 @@ pipeline {
         stage('Deploy to Staging') {
             steps {
                 echo "Deploying to staging..."
-                bat 'bash scripts/deploy.sh staging'
+                sh 'bash scripts/deploy.sh staging'
             }
         }
     }
