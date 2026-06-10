@@ -17,7 +17,7 @@ pipeline {
 
     // ---- Tools: NodeJS plugin manages the Node/npm installation ------------
     tools {
-        nodejs 'NodeJS-18'   // must match the name set in Manage Jenkins > Tools > NodeJS
+        nodejs 'NodeJS'   // must match the name set in Manage Jenkins > Tools > NodeJS
     }
 
     // ---- Environment variables available to every stage --------------------
