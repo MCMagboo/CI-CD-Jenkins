@@ -10,6 +10,7 @@ pipeline {
     // Run all stages inside a Node 18 container
     agent {
         agent any
+        ...
     }
 
     environment {
