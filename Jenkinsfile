@@ -1,15 +1,8 @@
-// =============================================================================
-//  Jenkinsfile — Declarative CI/CD Pipeline (Corrected Version)
-// -----------------------------------------------------------------------------
-//  Runs on any Jenkins agent. Make sure Node.js and npm are installed
-//  in the environment where Jenkins executes.
-// =============================================================================
-
 pipeline {
     agent any
 
     environment {
-        APP_NAME = 'cicd-demo-app'
+        APP_NAME = 'ci-cd-jenkins-app'
     }
 
     options {
@@ -27,62 +20,62 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Build Docker Image') {
             steps {
-                echo "Installing dependencies..."
-                sh 'npm ci'
+                script {
+                    echo "Building Docker image from Dockerfile..."
+                    dockerImage = docker.build("${APP_NAME}")
+                }
             }
         }
 
-        stage('Quality & Tests') {
-            parallel {
-                stage('Code Quality (Lint)') {
-                    steps {
-                        echo "Running the linter..."
+        stage('Install & Test in Container') {
+            steps {
+                script {
+                    dockerImage.inside {
+                        echo "Installing dependencies..."
+                        sh 'npm ci'
+
+                        echo "Running linter..."
                         sh 'npm run lint'
-                    }
-                }
-                stage('Unit Tests') {
-                    steps {
+
                         echo "Running unit tests..."
                         sh 'npm test'
                     }
-                    post {
-                        always {
-                            junit testResults: 'reports/junit/*.xml',
-                                  allowEmptyResults: true
-                        }
-                    }
                 }
             }
         }
 
-        stage('Build') {
+        stage('Build App in Container') {
             steps {
-                echo "Packaging the application..."
-                sh 'npm run build'
-                archiveArtifacts artifacts: 'dist/**', allowEmptyArchive: true
+                script {
+                    dockerImage.inside {
+                        echo "Packaging the application..."
+                        sh 'npm run build'
+                        archiveArtifacts artifacts: 'dist/**', allowEmptyArchive: true
+                    }
+                }
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                echo "Deploying ${APP_NAME} to staging..."
-                sh 'bash scripts/deploy.sh staging'
+                script {
+                    dockerImage.inside {
+                        echo "Deploying ${APP_NAME} to staging..."
+                        sh 'bash scripts/deploy.sh staging'
+                    }
+                }
             }
         }
     }
-    tools {
-  nodejs "NodeJS"
-}
-
 
     post {
         success {
             echo "✅ Pipeline finished successfully."
         }
         failure {
-            echo "❌ Pipeline failed — check the logs above."
+            echo "❌ Pipeline failed — check the stage logs above."
         }
         always {
             echo "Cleaning the workspace..."
