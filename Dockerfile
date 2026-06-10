@@ -1,15 +1,10 @@
-FROM node:18-alpine
+FROM jenkins/jenkins:lts-jdk17
 
-# Install missing library
-RUN apk add --no-cache libatomic
+USER root
 
-WORKDIR /app
+RUN apt-get update && \
+    apt-get install -y docker.io && \
+    apt-get install -y nodejs npm && \
+    apt-get clean
 
-COPY package*.json ./
-RUN npm ci --omit=dev
-
-COPY dist/ ./dist/
-COPY src/ ./src/
-
-EXPOSE 3000
-CMD ["node", "src/server.js"]
+USER jenkins
