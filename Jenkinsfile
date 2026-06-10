@@ -1,8 +1,16 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:18-bullseye'   // Use Debian-based Node image (includes libatomic)
+            args '-u root:root'        // Run as root to avoid permission issues
+        }
+    }
 
-    environment {
-        IMAGE_NAME = "ci-cd-jenkins-app"
+    options {
+        timestamps()
+        timeout(time: 30, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        disableConcurrentBuilds()
     }
 
     stages {
@@ -13,52 +21,39 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Install Dependencies') {
             steps {
-                script {
-                    echo "Building Docker image from Dockerfile..."
-                    dockerImage = docker.build("${IMAGE_NAME}")
-                }
+                echo "Installing dependencies..."
+                sh 'npm ci'
             }
         }
 
-        stage('Install Dependencies & Tests') {
+        stage('Lint') {
             steps {
-                script {
-                    dockerImage.inside {
-                        echo "Installing dependencies..."
-                        sh 'npm ci'
-
-                        echo "Running lint..."
-                        sh 'npm run lint'
-
-                        echo "Running unit tests..."
-                        sh 'npm test'
-                    }
-                }
+                echo "Running lint..."
+                sh 'npm run lint'
             }
         }
 
-        stage('Build App') {
+        stage('Test') {
             steps {
-                script {
-                    dockerImage.inside {
-                        echo "Building application..."
-                        sh 'npm run build'
-                        archiveArtifacts artifacts: 'dist/**', allowEmptyArchive: true
-                    }
-                }
+                echo "Running unit tests..."
+                sh 'npm test'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "Building application..."
+                sh 'npm run build'
+                archiveArtifacts artifacts: 'dist/**', allowEmptyArchive: true
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                script {
-                    dockerImage.inside {
-                        echo "Deploying to staging..."
-                        sh 'bash scripts/deploy.sh staging'
-                    }
-                }
+                echo "Deploying to staging..."
+                sh 'bash scripts/deploy.sh staging'
             }
         }
     }
@@ -71,6 +66,7 @@ pipeline {
             echo "❌ Pipeline failed — check logs above."
         }
         always {
+            echo "Cleaning workspace..."
             cleanWs()
         }
     }
