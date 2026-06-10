@@ -9,7 +9,7 @@ pipeline {
 
     // Run all stages inside a Node 18 container
     agent {
-        docker { image 'node:18' }
+        agent any
     }
 
     environment {
