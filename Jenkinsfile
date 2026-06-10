@@ -91,11 +91,6 @@ pipeline {
         }
 
         stage('Deploy to Staging') {
-            // 'when' gates a stage. Here we only deploy from the 'main' branch,
-            // so feature branches get tested but never deployed.
-            when {
-                branch 'main'
-            }
             steps {
                 echo "Deploying ${APP_NAME} to the staging environment..."
                 sh './scripts/deploy.sh staging'
