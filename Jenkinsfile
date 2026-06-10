@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:18-bullseye'   // Debian-based Node image includes libatomic
-            args '-u root:root'        // Run as root to avoid permission issues
-        }
-    }
+    agent any
 
     options {
         timestamps()
@@ -24,28 +19,28 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo "Installing dependencies..."
-                sh 'npm ci'
+                bat 'npm ci'
             }
         }
 
         stage('Lint') {
             steps {
                 echo "Running lint..."
-                sh 'npm run lint'
+                bat 'npm run lint'
             }
         }
 
         stage('Test') {
             steps {
                 echo "Running unit tests..."
-                sh 'npm test'
+                bat 'npm test'
             }
         }
 
         stage('Build') {
             steps {
                 echo "Building application..."
-                sh 'npm run build'
+                bat 'npm run build'
                 archiveArtifacts artifacts: 'dist/**', allowEmptyArchive: true
             }
         }
@@ -53,7 +48,7 @@ pipeline {
         stage('Deploy to Staging') {
             steps {
                 echo "Deploying to staging..."
-                sh 'bash scripts/deploy.sh staging'
+                bat 'scripts\\deploy.bat staging'
             }
         }
     }
@@ -64,10 +59,6 @@ pipeline {
         }
         failure {
             echo "❌ Pipeline failed — check logs above."
-        }
-        always {
-            echo "Cleaning workspace..."
-            cleanWs()
         }
     }
 }
