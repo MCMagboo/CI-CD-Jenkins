@@ -4,5 +4,4 @@ reports/
 coverage/
 *.log
 .DS_Store
-Jenkinsfile
 .env
