@@ -93,7 +93,7 @@ pipeline {
         stage('Deploy to Staging') {
             steps {
                 echo "Deploying ${APP_NAME} to the staging environment..."
-                sh './scripts/deploy.sh staging'
+                sh 'bash scripts/deploy.sh staging'
             }
         }
     }
