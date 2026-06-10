@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'node:18-bullseye'   // Use Debian-based Node image (includes libatomic)
+            image 'node:18-bullseye'   // Debian-based Node image includes libatomic
             args '-u root:root'        // Run as root to avoid permission issues
         }
     }
