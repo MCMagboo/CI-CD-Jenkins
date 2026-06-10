@@ -1,8 +1,8 @@
 // =============================================================================
-//  Jenkinsfile — Declarative CI/CD Pipeline (Fixed Version)
+//  Jenkinsfile — Declarative CI/CD Pipeline (Corrected Version)
 // -----------------------------------------------------------------------------
-//  Runs inside a Node 18 Docker image, so npm commands work without Jenkins
-//  needing the NodeJS plugin. Every push triggers the stages below in order.
+//  Runs on any Jenkins agent. Make sure Node.js and npm are installed
+//  in the environment where Jenkins executes.
 // =============================================================================
 
 pipeline {
@@ -19,9 +19,7 @@ pipeline {
         disableConcurrentBuilds()
     }
 
-
     stages {
-
         stage('Checkout') {
             steps {
                 echo "Checking out the source code..."
